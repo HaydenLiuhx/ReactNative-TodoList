@@ -1,39 +1,71 @@
 import * as React from "react";
-import { StyleSheet, View, Text } from "react-native";
-
+import { StyleSheet, View, TextInput, Text, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { Button, Flex } from '@ant-design/react-native';
+import { AppRegistry } from 'react-native';
 export default class App extends React.Component {
   state = {
     inputValue: "",
-    list: [1, 2, 3],
+    list: ["First", "Second", "Third"],
   };
   componentDidMount = () => {
-    this.getListInfo()
+    this.getListInfo();
   };
   getListInfo() {
-    fetch('http://www.abc.com/list.json')
-      .then((res) => res.json())
-      .then((res) => {
-       this.setState({
-         list:res.data.list
-       })
-      })
-      
+    //fetch("http://www.abc.com/list.json")
+      // .then((res) => res.json())
+      // .then((res) => {
+        // this.setState({
+        //   list: res.data.list,
+        // });
+      //})
+      // .catch((err) => {
+      //   alert(err);
+      // });
+  }
+  handleChangeText = (value) => {
+    this.setState({inputValue: value})
+  }
+  handleButtonPress = () => {
+    this.setState((prevState) => ({
+      list: [...prevState.list, prevState.inputValue],
+      inputValue: ''
+    }))
+    // this.setState({
+    //   list: [...this.state.list, this.state.inputValue],
+    //   inputValue: ''
+    // })
+  }
+  handleDelte = (index) => {
+    const list = this.state.list
+    list.splice(index,1)
+    this.setState({
+      list
+    })
   }
   render() {
     return (
       <View
         style={{
+          display: 'flex',
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
         }}
       >
-        <View>
+        <View style={styles.topArea}>
+          <TextInput onChangeText={this.handleChangeText} value={this.state.inputValue} style={styles.input} placeholder="Please Input Sth" />
+          <TouchableOpacity >
+          <Button type="primary"  style={{ backgroundColor:'#9254de',borderRadius:10,borderColor:'#9254de', margin: 5, paddingLeft: 4, paddingRight: 4 }} onPress={()=>this.handleButtonPress()} >Submit</Button>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.list}>
           {this.state.list.map((item, index) => {
             return (
-              <Text style={styles.item} key={index}>
+              <TouchableWithoutFeedback onPress={() => this.handleDelte(index)}>
+              <Text style={[styles.item, styles.itemActivated]} 
+                    key={index}
+              >
                 {item}
               </Text>
+              </TouchableWithoutFeedback>
             );
           })}
         </View>
@@ -44,7 +76,27 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   item: {
-    textAlign: "center",
+    marginLeft: 20,
     lineHeight: 30,
+    
+  },
+  itemActivated: {
+    textAlign: 'left'
+  },
+  topArea: {
+    height: 60,
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  list: {
+    backgroundColor: '#eee',
+  },
+  input: {
+    lineHeight: 20,
+    color: '#333',
+    paddingLeft: 10,
+    fontSize: 12,
+    flex: 1,
   },
 });
+AppRegistry.registerComponent('App', () => App);
