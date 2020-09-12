@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, TextInput, Text, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { StyleSheet, View, TextInput, Text, TouchableOpacity, TouchableWithoutFeedback, ScrollView, FlatList } from "react-native";
 import { Button, Flex } from '@ant-design/react-native';
 import { AppRegistry } from 'react-native';
 export default class App extends React.Component {
@@ -56,19 +56,23 @@ export default class App extends React.Component {
           <Button type="primary"  style={{ backgroundColor:'#9254de',borderRadius:10,borderColor:'#9254de', margin: 5, paddingLeft: 4, paddingRight: 4 }} onPress={()=>this.handleButtonPress()} >Submit</Button>
           </TouchableOpacity>
         </View>
-        <View style={styles.list}>
-          {this.state.list.map((item, index) => {
-            return (
-              <TouchableWithoutFeedback onPress={() => this.handleDelte(index)}>
-              <Text style={[styles.item, styles.itemActivated]} 
-                    key={index}
-              >
-                {item}
-              </Text>
-              </TouchableWithoutFeedback>
-            );
-          })}
-        </View>
+        <FlatList style={styles.list} keyExtractor={(item,index)=>index.toString()} data={this.state.list} 
+        renderItem={({item, index})=>{
+          return (
+                <TouchableWithoutFeedback 
+                onPress={() => this.handleDelte(index)} >
+                  <View>
+                    <Text style={[styles.item, styles.itemActivated]} 
+                    >
+                      {item}
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
+              );
+            }}
+            
+        >
+        </FlatList>
       </View>
     );
   }
@@ -90,6 +94,7 @@ const styles = StyleSheet.create({
   },
   list: {
     backgroundColor: '#eee',
+    height:60,
   },
   input: {
     lineHeight: 20,
